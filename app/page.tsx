@@ -316,17 +316,18 @@ function HemicyclePanel({ contract, ids }: { contract: Contract | null; ids: num
 
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 bg-white dark:bg-zinc-900/60">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-medium">Emiciclo</p>
-        <div className="flex items-center gap-2">
-          <label className="text-xs text-zinc-400">Proposta</label>
+      <div className="flex items-center justify-between gap-2 overflow-hidden">
+        <p className="text-sm font-medium flex-shrink-0">Emiciclo</p>
+        <div className="flex items-center gap-2 min-w-0">
+          <label className="text-xs text-zinc-400 flex-shrink-0">Proposta</label>
           <select
             value={selectedId ?? ""}
             onChange={(e) => {
               const v = e.target.value;
               setSelectedId(v ? Number(v) : null);
             }}
-            className="rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+            title={selectedId != null ? `#${selectedId} ${selectedName ? `— ${selectedName}` : ""}` : "— Seleziona —"}
+            className="min-w-0 w-[180px] max-w-[180px] truncate pr-6 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">— Seleziona —</option>
             {ids.map((id) => (
@@ -376,12 +377,14 @@ function HemicyclePanel({ contract, ids }: { contract: Contract | null; ids: num
                   className="text-zinc-300"
                 />
               ))}
+              { /*
               <text
                 x={cx}
                 y={cy - 10}
                 textAnchor="middle"
                 className="text-[10px] fill-zinc-400"
               >REP</text>
+              */}
             </g>
           )}
         </svg>
