@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistema Votazioni del Comitato Studentesco
 
-## Getting Started
+<p align="center">
+  <img src="public/favicon.svg" alt="Icona del progetto" width="96" height="96" />
+</p>
 
-First, run the development server:
+Un’app Next.js + Solidity per gestire e visualizzare le votazioni del Comitato Studentesco, con interfaccia moderna (dark/light), emiciclo in stile parlamento e integrazione con wallet (MetaMask).
 
+<p align="center">
+  <a href="https://github.com/DuPont9029/comitato-sc"><img alt="Stars" src="https://img.shields.io/github/stars/DuPont9029/comitato-sc?style=social"></a>
+  <a href="https://github.com/DuPont9029/comitato-sc"><img alt="Forks" src="https://img.shields.io/github/forks/DuPont9029/comitato-sc?style=social"></a>
+  <img alt="Issues" src="https://img.shields.io/github/issues/DuPont9029/comitato-sc">
+  <img alt="PRs" src="https://img.shields.io/github/issues-pr/DuPont9029/comitato-sc">
+  <img alt="Last Commit" src="https://img.shields.io/github/last-commit/DuPont9029/comitato-sc">
+  <img alt="Repo Size" src="https://img.shields.io/github/repo-size/DuPont9029/comitato-sc">
+  <img alt="Languages Count" src="https://img.shields.io/github/languages/count/DuPont9029/comitato-sc">
+  <img alt="Top Language" src="https://img.shields.io/github/languages/top/DuPont9029/comitato-sc">
+</p>
+
+<p align="center">
+  <a href="https://starchart.cc/DuPont9029/comitato-sc"><img alt="Star History" src="https://starchart.cc/DuPont9029/comitato-sc.svg" /></a>
+</p>
+
+## 🚀 Caratteristiche
+- Emiciclo dinamico: riempimento dei seggi in base ai voti, simmetrico dal centro verso l’esterno.
+- Stato utente: rappresentante, diritto di voto, ha già votato.
+- Area Proposte: elenco e gestione, dropdown con troncamento (nessun overflow).
+- Area Studenti: voto per ID proposta (con diritto di voto).
+- Dark/Light mode curata: in light mode pannelli bianchi (Emiciclo/Area Studenti) come "Stato Utente".
+
+## 🧰 Stack
+- Next.js (App Router) • TypeScript
+- Ethers.js • Solidity
+- Tailwind-like utility classes (via CSS/JSX)
+
+## 📦 Setup
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
+# Apri http://localhost:3000/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔗 Contratto
+- File: `contratto.sol`
+- Configurazione: imposta `CONTRACT_ADDRESS` in `lib/contract.ts` dopo il deploy.
+- ABI: già presente in `lib/contract.ts` (`CONTRACT_ABI`). Aggiorna se modifichi il contratto.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deploy rapido (Remix)
+1. Apri https://remix.ethereum.org e carica `contratto.sol`.
+2. Compila e fai deploy sulla rete (testnet ok).
+3. Copia l’indirizzo del contratto e incollalo in `lib/contract.ts`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🗂️ Struttura
+- `app/page.tsx` — UI, logica client, emiciclo SVG.
+- `app/layout.tsx` — metadata, font, favicon SVG (`/public/favicon.svg`).
+- `lib/contract.ts` — indirizzo + ABI.
+- `public/` — asset (favicon, icone, svg).
 
-## Learn More
+## 📊 Statistiche della Repo
+- Link repo: https://github.com/DuPont9029/comitato-sc
+- Stelle: ![Stars](https://img.shields.io/github/stars/DuPont9029/comitato-sc?label=⭐%20stars)
+- Forks: ![Forks](https://img.shields.io/github/forks/DuPont9029/comitato-sc?label=🍴%20forks)
+- Ultimo commit: ![Last](https://img.shields.io/github/last-commit/DuPont9029/comitato-sc?label=🕒%20last%20commit)
+- Dimensione repo: ![Size](https://img.shields.io/github/repo-size/DuPont9029/comitato-sc?label=📦%20repo%20size)
+- Lingue: ![Top](https://img.shields.io/github/languages/top/DuPont9029/comitato-sc?label=🏷️%20top%20language) ![Count](https://img.shields.io/github/languages/count/DuPont9029/comitato-sc?label=🔤%20languages)
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧪 Script
+- Sviluppo: `pnpm dev`
+- Build: `pnpm build` → `pnpm start`
+- Lint: `pnpm lint`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🧭 UX & Note
+- Dropdown con nomi lunghi: troncato con ellissi, niente overflow; tooltip via `title` mostra il nome completo.
+- Emiciclo: rendering client-side per evitare mismatch di idratazione.
+- Favicon: SVG come primaria, fallback ICO (cache aggressiva: hard reload `Cmd+Shift+R`).
 
-## Deploy on Vercel
+## 🔒 Sicurezza
+- Nessuna chiave privata nel frontend. Le transazioni usano il wallet del browser (`BrowserProvider`).
+- Verifica rete e account in MetaMask prima di votare.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠️ Troubleshooting
+- L’emiciclo non appare correttamente: assicurati che il mount client sia attivo (hook dedicato).
+- Dropdown sfora: regola la larghezza `w-[180px]` in `app/page.tsx` se serve.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🗺️ Roadmap
+- probabilmente dovrò fixare l'emiciclo
+- Storico votazioni e filtri.
+- Test E2E/unit per componenti chiave.
+
+---
+
+Se ti piace, lascia una ⭐
