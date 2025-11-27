@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BrowserProvider, Contract, decodeBytes32String } from "ethers";
 import * as ethers from "ethers";
+import { MetaMaskSDK } from "@metamask/sdk";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../lib/contract";
 
 export default function Home() {
@@ -35,8 +36,26 @@ export default function Home() {
 
   const connect = useCallback(async () => {
     try {
+      const isMobile = typeof navigator !== "undefined" && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (!(window as any).ethereum) {
-        setStatus("MetaMask non rilevato. Installa l’estensione.");
+        try {
+          setStatus("Apro MetaMask…");
+          const MMSDK = new MetaMaskSDK({
+            injectProvider: true,
+            dappMetadata: { name: "Comitato Studentesco", url: window.location.href },
+          });
+          const ethereum = MMSDK.getProvider();
+          const prov = new BrowserProvider(ethereum as any);
+          setProvider(prov);
+          const accounts: string[] = await (ethereum as any).request({ method: "eth_requestAccounts" });
+          setAccount(accounts[0]);
+          const net = await prov.send("eth_chainId", []);
+          setChainId(net);
+          setStatus("");
+        } catch (e) {
+          console.error(e);
+          setStatus("MetaMask non rilevato. Installa l’app MetaMask.");
+        }
         return;
       }
       const prov = new BrowserProvider((window as any).ethereum);
