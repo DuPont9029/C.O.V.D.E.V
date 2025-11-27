@@ -1,10 +1,10 @@
-# Sistema Votazioni del Comitato Studentesco
+# Configurable Open-source Voting & Decentralized Election Venue - C.O.V.D.E.V / Sistema Votazioni del Comitato Studentesco
 
 <p align="center">
   <img src="public/favicon.svg" alt="Icona del progetto" width="96" height="96" />
 </p>
 
-Un’app Next.js + Solidity per gestire e visualizzare le votazioni del Comitato Studentesco, con interfaccia moderna (dark/light), emiciclo in stile parlamento e integrazione con wallet (MetaMask).
+C.O.V.D.E.V è un’app Next.js + Solidity per gestire e visualizzare le votazioni del Comitato Studentesco, con interfaccia moderna (dark/light), emiciclo in stile parlamento e integrazione con wallet (MetaMask).
 
 <p align="center">
   <a href="https://github.com/DuPont9029/comitato-sc"><img alt="Stars" src="https://img.shields.io/github/stars/DuPont9029/comitato-sc?style=social"></a>
