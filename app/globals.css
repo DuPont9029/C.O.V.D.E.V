@@ -32,6 +32,10 @@
   }
 }
 
+html {
+  overflow-y: scroll;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
