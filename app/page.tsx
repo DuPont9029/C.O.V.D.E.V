@@ -5,6 +5,7 @@ import { BrowserProvider, Contract, decodeBytes32String } from "ethers";
 import * as ethers from "ethers";
 import { MetaMaskSDK } from "@metamask/sdk";
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "../lib/contract";
+import { Header } from "./components/Header";
 import SnakeGame from './SnakeGame';
 
 export default function Home() {
@@ -65,6 +66,7 @@ export default function Home() {
           const net = await prov.send("eth_chainId", []);
           setChainId(net);
           setStatus("");
+          localStorage.setItem("walletConnected", "true");
         } catch (e) {
           console.error(e);
           setStatus("MetaMask non rilevato. Installa l’app MetaMask.");
@@ -80,13 +82,26 @@ export default function Home() {
       const net = await prov.send("eth_chainId", []);
       setChainId(net);
       setStatus("");
+      localStorage.setItem("walletConnected", "true");
     } catch (err: any) {
       console.error(err);
       setStatus(err?.message || "Errore di connessione wallet");
     }
   }, []);
 
-  const disconnect = useCallback(() => {
+  const disconnect = useCallback(async () => {
+    // Tenta di revocare i permessi su MetaMask per una disconnessione completa
+    if ((window as any).ethereum) {
+      try {
+        await (window as any).ethereum.request({
+          method: "wallet_revokePermissions",
+          params: [{ eth_accounts: {} }]
+        });
+      } catch (e) {
+        console.error("Revoke permissions failed", e);
+      }
+    }
+
     // Nota: MetaMask non espone un vero "disconnect"; puliamo lo stato locale
     setAccount(null);
     setProvider(null);
@@ -95,6 +110,7 @@ export default function Home() {
     setHasVotingRight(false);
     setHasVoted(false);
     setStatus("");
+    localStorage.removeItem("walletConnected");
   }, []);
 
   const copyAddress = useCallback(async () => {
@@ -110,6 +126,10 @@ export default function Home() {
   }, [account]);
 
   useEffect(() => {
+    if (localStorage.getItem("walletConnected") === "true") {
+      connect();
+    }
+
     if ((window as any).ethereum) {
       (window as any).ethereum.on("accountsChanged", (accs: string[]) => {
         setAccount(accs?.[0] ?? null);
@@ -118,7 +138,7 @@ export default function Home() {
         setChainId(cid);
       });
     }
-  }, []);
+  }, [connect]);
 
   useEffect(() => {
     refreshRole();
@@ -128,46 +148,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-zinc-50 to-white dark:from-black dark:to-zinc-900 text-zinc-900 dark:text-zinc-100">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
-        <h1 className="text-xl font-semibold">
-          Comitato Studentesco — Votazioni
-        </h1>
-        <div className="flex items-center gap-3">
-          {account ? (
-            <div className="flex items-center gap-2">
-              <span className="flex items-center gap-2 rounded-full bg-zinc-100 dark:bg-zinc-800 pl-2 pr-3 py-1 text-sm">
-                <AddressAvatar address={account} size={18} />
-                <button
-                  onClick={copyAddress}
-                  className="font-mono hover:underline"
-                  title={copied ? "Copiato!" : "Copia"}
-                >
-                  {account.slice(0, 6)}…{account.slice(-4)}
-                </button>
-              </span>
-              <button
-                onClick={disconnect}
-                className="rounded-lg bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-100 px-2 py-1 text-xs hover:bg-zinc-300 dark:hover:bg-zinc-600"
-              >
-                Disconnetti
-              </button>
-              {copied && <span className="ui-badge">Copiato</span>}
-            </div>
-          ) : (
-            <button
-              onClick={connect}
-              className="rounded-lg bg-black text-white px-4 py-2 text-sm hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-            >
-              Collega Wallet
-            </button>
-          )}
-          {chainId && (
-            <span className="text-xs text-zinc-500">
-              Rete: {isMainnet ? "Ethereum Mainnet" : chainId}
-            </span>
-          )}
-        </div>
-      </header>
+      <Header
+        account={account}
+        connect={connect}
+        disconnect={disconnect}
+        chainId={chainId}
+        isMainnet={isMainnet}
+      />
 
       <main className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section className="lg:col-span-1 space-y-4">
@@ -1509,61 +1496,4 @@ function StudentProposalRow({
   );
 }
 
-function AddressAvatar({
-  address,
-  size = 24,
-}: {
-  address: string;
-  size?: number;
-}) {
-  // Generazione semplice di identicon SVG basato sull'indirizzo (seeded)
-  const seed = Array.from(address.toLowerCase()).reduce(
-    (acc, ch) => acc + ch.charCodeAt(0),
-    0
-  );
-  function rnd(i: number) {
-    let x = (seed + i * 9973) % 2147483647;
-    x = (x * 48271) % 2147483647;
-    return x / 2147483647;
-  }
-  const hue = Math.floor(rnd(1) * 360);
-  const fg = `hsl(${hue}, 70%, 50%)`;
-  const bg = `hsl(${(hue + 180) % 360}, 40%, 92%)`;
-  const cells: boolean[] = [];
-  for (let y = 0; y < 5; y++) {
-    const row: boolean[] = [];
-    for (let x = 0; x < 3; x++) {
-      row.push(rnd(y * 5 + x) > 0.5);
-    }
-    // Specchia per ottenere 5 colonne
-    cells.push(...row, row[1], row[0]);
-  }
-  const cellSize = size / 5;
-  const rects = [] as any[];
-  for (let y = 0; y < 5; y++) {
-    for (let x = 0; x < 5; x++) {
-      const idx = y * 5 + x;
-      rects.push({ x: x * cellSize, y: y * cellSize, on: cells[idx] });
-    }
-  }
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ borderRadius: "50%", background: bg }}
-    >
-      {rects.map((r, i) => (
-        <rect
-          key={i}
-          x={r.x}
-          y={r.y}
-          width={cellSize}
-          height={cellSize}
-          fill={r.on ? fg : "transparent"}
-        />
-      ))}
-    </svg>
-  );
-}
+
