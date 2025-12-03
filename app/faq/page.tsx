@@ -52,6 +52,27 @@ export default function FAQ() {
                             ETH.
                         </p>
                     </section>
+
+                    <section>
+                        <h2 className="text-xl font-semibold mb-2">
+                            Qual è il costo di voto?
+                        </h2>
+                        <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                            Il costo di voto è di 0.001 ETH.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="text-xl font-semibold mb-2">
+                            Se il sito va offline come faccio a votare?
+                        </h2>
+                        <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                            Non ti preoccupare, abbiamo un mirror decentralizzato che puoi usare, basta 
+                            visitare <a href="https://cdm4upstdl7n3kbaooekc6nxgrrfjnazeocmunigrettyv2562rq.trump-ario.store/ENnKPlMa_t2oIHOIoXm3NGJUtBkjhMo1BoknPFdd9qM" className="text-blue-600 dark:text-blue-400">visita sito decentralizzato</a>.
+                            consigliamo inoltre di tenere una copia locale del file html decentralizzato che puoi comodamente scaricare 
+                            <a href="https://ardrive.trump-ario.store/#/file/d0895fc6-2085-4914-85c9-99104bf05f21/view" className="text-blue-600 dark:text-blue-400"> scarica sito decentralizzato</a>.
+                        </p>
+                    </section>
                 </div>
             </main>
         </div>
